@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>AutoProfit Nexus Dashboard</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #0f172a;
+        color: #f1f5f9;
+        margin: 0;
+        padding: 2rem;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+      .status {
+        background: #1e293b;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      button {
+        margin: 0.5rem 0;
+        padding: 0.75rem 1.5rem;
+        background: #38bdf8;
+        color: #0f172a;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #0ea5e9;
+      }
+      .log {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #1e293b;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>✅ AutoProfit Nexus Dashboard</h1>
+    <div class="status">
+      <p><strong>Status:</strong> All systems go</p>
+      <p><strong>Backend:</strong> Connected</p>
+    </div>
+
+    <button onclick="trigger('blogs')">Run Blog Automation</button>
+    <button onclick="trigger('youtube')">Run YouTube Automation</button>
+    <button onclick="trigger('crypto')">Run Crypto Bot</button>
+    <button onclick="trigger('tools')">Deploy AI Tools</button>
+
+    <div class="log" id="log">📝 Logs will appear here...</div>
+
+    <script>
+      function trigger(task) {
+        const log = document.getElementById('log');
+        log.textContent = `🔄 Running ${task}...`;
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+
+        fetch(`https://apn-backend-server-final.onrender.com/run/${task}`, {
+          method: 'POST',
+          signal: controller.signal
+        })
+        .then(response => response.text())
+        .then(data => {
+          clearTimeout(timeout);
+          log.textContent = `✅ ${task} completed:\n\n` + data;
+        })
+        .catch(err => {
+          clearTimeout(timeout);
+          const message = err.name === 'AbortError' 
+            ? "⏱️ Timeout: backend took too long to respond." 
+            : `❌ Error: ${err.message}`;
+          log.textContent = message;
+        });
+      }
+    </script>
+  </body>
+</html>
