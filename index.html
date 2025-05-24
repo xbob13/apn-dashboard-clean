@@ -67,8 +67,7 @@
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 8000); // 8 second timeout
 
-        fetch(`https://apn-backend-server-final.onrender.com/run/${task}`, {
-          method: 'POST',
+        fetch(`https://apn-backend-crypto.onrender.com/run/${task}`, {          method: 'POST',
           signal: controller.signal
         })
         .then(response => response.text())
